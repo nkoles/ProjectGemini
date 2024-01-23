@@ -6,30 +6,72 @@ using UnityEngine;
 public class InventorySlot : MonoBehaviour
 {
     //Card Type
-    [CanBeNull] public CardTypes? card;
+    [CanBeNull] private CardBase? card;
     //Object Linked to Slot
-    [CanBeNull] public GameObject? cardGameObject;
+    [CanBeNull] private GameObject? cardGameObject;
+    [CanBeNull] private Renderer cardRenderer;
 
-    public InventorySlot(CardTypes? cardType, GameObject cardObject)
+    public InventorySlot(CardBase? cardType, GameObject cardObject)
     {
-        card = cardType;
-        cardGameObject = cardObject;
+        Card = cardType;
+        CardObject = cardObject;
     }
 
     public InventorySlot()
     {
-        card = null;
-        cardGameObject = null;
+        Card = null;
+        CardObject = null;
     }
 
-    private void Update()
+    public CardBase Card
     {
-        if(card == null)
-        {
-            cardGameObject.SetActive(false);
-        } else
-        {
+        get { return card; }
+
+        set {
+
+            if( value != null)
+            {
+                card = value;
+
+                if(cardGameObject != null)
+                {
+                    cardRenderer.enabled = true;
+                    cardRenderer.material = value.CardMaterial;
+                }
+
+            } 
+            else
+            {
+                card = null;
+
+                if( cardGameObject != null )
+                    cardRenderer.enabled = false;
+            }
 
         }
+    }
+
+    public GameObject CardObject
+    {
+        get { return cardGameObject; }
+
+        set
+        {
+            if(value != null)
+            {
+                cardGameObject = value;
+                cardRenderer = cardGameObject.GetComponent<Renderer>();
+
+                if(card != null)
+                {
+                    cardRenderer.material = card.CardMaterial;
+                }
+            }
+            else
+            {
+                cardGameObject = null;
+            }
+        }
+
     }
 }
