@@ -3312,8 +3312,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abd3af23381d4e34c96459f2d285c8d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stringforThisCard: 'The lethal Attack card. Play this card to select another player
-    to attack. '
+  stringforThisCard: 'The lethal Attack card. Select another player to attack. '
   HTPTextBox: {fileID: 1842783640}
   cardHoverPosition: 0
   moveAmount: 10
@@ -4227,8 +4226,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1202912408}
-  - {fileID: 237304267}
   - {fileID: 1842783639}
+  - {fileID: 237304267}
   - {fileID: 1479215542}
   - {fileID: 1274329217}
   - {fileID: 748831614}
@@ -4463,8 +4462,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -4.2385864, y: 146}
-  m_SizeDelta: {x: 1785.8, y: 465.8591}
+  m_AnchoredPosition: {x: 0, y: 156.36}
+  m_SizeDelta: {x: 1389.234, y: 476.94}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1842783640
 MonoBehaviour:
@@ -4486,11 +4485,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Gemini is a game of wits, and cards.\nOn your turn, choose a card from
-    your hand to play.\n\nOnce every player has chosen their card, the effects are
-    applied and fates are decided. \nAnother card is drawn from the deck and the
-    game continues until only one player remains. \n\nThe surviving player is declared
-    the winner. \n"
+  m_text: "Enter a game of life and death.\n\nOn your turn, choose a card from your
+    hand to play.\nOnce every player has chosen a card, the cards are revealed and
+    fates are decided. \nContinue playing until only one survivor remains.\n\nHover
+    over a card to view more info:\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 636bc85914d6bb74da5ce591a7721d6d, type: 2}
   m_sharedMaterial: {fileID: 320626582597483420, guid: 636bc85914d6bb74da5ce591a7721d6d, type: 2}
