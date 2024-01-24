@@ -11,23 +11,23 @@ public class HowToPlay : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     [SerializeField] private TextMeshProUGUI HTPTextBox;
     [SerializeField] private float cardHoverPosition;
     private Vector3 cardsStartingPosition;
-    private string currentText;
+    private string startingText;
     public int moveAmount;
     void Start()
     {
-        currentText = HTPTextBox.text;
+        startingText = HTPTextBox.text;
         cardsStartingPosition = transform.position;
     }
 
     public void OnPointerEnter(PointerEventData eventData) // move the cards up when hovering over them 
     {
-        StartCoroutine(waitToChange());
-        StartCoroutine(LerpMovement(true));
+            StartCoroutine(waitToChange());
+            StartCoroutine(LerpMovement(true));
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        HTPTextBox.text = currentText;
+        HTPTextBox.text = startingText;
         StartCoroutine(LerpMovement(false));
     }
 
@@ -40,12 +40,15 @@ public class HowToPlay : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     private IEnumerator LerpMovement(bool isUp)
     {
+        yield return new WaitForSeconds(0.2f);
         int movement = (isUp) ? moveAmount : 0;
-        Vector3 goalPosition = cardsStartingPosition + new Vector3(0, movement, 0);
-        for (float i = 0; i < 1.1; i += 0.17f)
-        {
-            transform.position = Vector3.Slerp(transform.position, goalPosition, i);
-            yield return new WaitForSeconds(0.01f);
-        }
+            Vector3 goalPosition = cardsStartingPosition + new Vector3(0, movement, 0);
+            for (float i = 0; i < 1.1; i += 0.17f)
+            {
+                transform.position = Vector3.Slerp(transform.position, goalPosition, i);
+                yield return new WaitForSeconds(0.01f);
+            }
     }
+
+  
 }
