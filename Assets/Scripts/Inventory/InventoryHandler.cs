@@ -9,6 +9,12 @@ public class InventoryHandler : MonoBehaviour
     //Inventory ID per Player: 0 = Player, 1 = AI 1, 2 = AI 2, 3 = AI = 3
     [SerializeField] private int _inventoryID;
 
+    public int PlayerID
+    {
+        get { return _inventoryID; }
+    }
+
+
     public GameObject[] cards = new GameObject[3];
     public InventorySlot[] inventorySlots = new InventorySlot[3];
 
