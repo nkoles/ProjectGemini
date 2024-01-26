@@ -53,7 +53,7 @@ public class PlayerAction : MonoBehaviour
     {
         var playCardNum = Random.Range(0, _playerInventory.inventorySlots.Length);
         int target = _playerInventory.PlayerID;
-            
+
         // If the chosen card is attack, attack a random player in the game that is not itself
         if (_playerInventory.inventorySlots[playCardNum].Card.CardType == "Attack")
         {

@@ -8,6 +8,7 @@ using Random = UnityEngine.Random;
 
 public class RoundManager : MonoBehaviour
 {
+    static public int beanCount = 1;
     private int roundCount;
 
     public List<GameObject> aiPlayerModels = new List<GameObject>();
@@ -97,6 +98,32 @@ public class RoundManager : MonoBehaviour
         
     }
 
+    private CardBase CardDrawProbability(int beanCount)
+    {
+        int percentage = Random.Range(0, 100);
+
+        int beanPercentage = 10 / beanCount;
+        int swapPercentage = beanPercentage / 2;
+        int otherCardPercentage = (100 - beanPercentage - swapPercentage) / 3;
+
+        if (percentage > 100 - beanPercentage)
+        {
+            return CardTypes.CardAttack;
+        }
+        
+        if(percentage > 100 - beanPercentage - swapPercentage)
+        {
+            return CardTypes.CardSwap;
+        }
+
+        if(percentage > 100 - beanPercentage - swapPercentage - otherCardPercentage)
+        {
+            return CardTypes.CardBlock;
+        }
+
+        return CardTypes.CardAttack;
+    }
+
     // Deals the card to the player, taking in the player's ID and the inventory slot ID
     private IEnumerator CardDealing(int inventoryID, int inventorySlotID)
     {
@@ -146,21 +173,7 @@ public class RoundManager : MonoBehaviour
         int randomTypeGenerator = Random.Range(0, 101);
 
         // Assign random value to a card type
-        switch (randomTypeGenerator)
-        {
-            case < 34:
-                dealedCardType = CardTypes.CardAttack;
-                break;
-            case < 68:
-                dealedCardType = CardTypes.CardBlock;
-                break;
-            case < 86:
-                dealedCardType = CardTypes.CardSwap;
-                break;
-            case >= 86:
-                dealedCardType = CardTypes.CardBean;
-                break;
-        }
+        dealedCardType = CardDrawProbability(beanCount);
 
         // Assign new card to the player's inventory
         playerInventories[inventoryID].AddCard(inventorySlotID, dealedCardType);

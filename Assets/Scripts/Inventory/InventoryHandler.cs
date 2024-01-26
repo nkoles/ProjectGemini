@@ -27,7 +27,7 @@ public class InventoryHandler : MonoBehaviour
 
     public bool CheckForBean()
     {
-        foreach(InventorySlot slot in inventorySlots)
+        foreach (InventorySlot slot in inventorySlots)
         {
             if (slot.Card.CardType == "Bean")
                 return true;
