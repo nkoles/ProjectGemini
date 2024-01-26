@@ -8,9 +8,7 @@ public class InventoryHandler : MonoBehaviour
 {
     //Inventory ID per Player: 0 = Player, 1 = AI 1, 2 = AI 2, 3 = AI = 3
     [SerializeField] private int _inventoryID;
-
     public int PlayerID { get; private set; }
-
 
     public GameObject[] cards = new GameObject[3];
     public InventorySlot[] inventorySlots = new InventorySlot[3];
@@ -27,6 +25,17 @@ public class InventoryHandler : MonoBehaviour
         }
     }
 
+    public bool CheckForBean()
+    {
+        foreach(InventorySlot slot in inventorySlots)
+        {
+            if (slot.Card.CardType == "Bean")
+                return true;
+        }
+
+        return false;
+    }
+
     //Adds Card To Designated Slot
     //0: Attack, 1: Block, 2: Swap, 3: Bean
     public void AddCard(int slotID, CardBase cardType)
@@ -36,7 +45,11 @@ public class InventoryHandler : MonoBehaviour
 
     public void RemoveCard(int slotID)
     {
+        inventorySlots[slotID].ResetDefaultTransform();
         inventorySlots[slotID].Card = null;
+
+
+        print(inventorySlots[slotID].CardObject.transform.localRotation);
     }
 
     public void RemoveAllCards()

@@ -12,6 +12,9 @@ public class InventorySlot : MonoBehaviour
     [CanBeNull] public GameObject? cardGameObject;
     [CanBeNull] private Renderer cardRenderer;
 
+    //[CanBeNull] public KeyValuePair<Vector3, Quaternion> defaultPosRot;
+    public Tuple<Vector3, Quaternion, Quaternion> defaulPosRotLocalRot;
+
     public InventorySlot(CardBase? cardType, GameObject cardObject)
     {
         Card = cardType;
@@ -48,7 +51,9 @@ public class InventorySlot : MonoBehaviour
                 card = null;
 
                 if( cardGameObject != null )
+                {
                     cardGameObject.transform.GetChild(0).gameObject.SetActive(false);
+                }
             }
 
         }
@@ -66,8 +71,18 @@ public class InventorySlot : MonoBehaviour
                 cardGameObject.transform.GetChild(0).gameObject.SetActive(false);
                 cardRenderer = cardGameObject.transform.GetChild(0).GetComponentInChildren<Renderer>(true);
 
-                if(card != null)
+                defaulPosRotLocalRot = new Tuple<Vector3, Quaternion, Quaternion>
+                                        (cardGameObject.transform.localPosition, 
+                                        cardGameObject.transform.localRotation,
+                                        cardGameObject.transform.GetChild(0).rotation);
+
+                if (card != null)
                 {
+                    defaulPosRotLocalRot = new Tuple<Vector3, Quaternion, Quaternion>
+                                        (cardGameObject.transform.localPosition,
+                                        cardGameObject.transform.localRotation,
+                                        cardGameObject.transform.GetChild(0).rotation);
+
                     cardRenderer.material = card.CardMaterial;
                 }
             }
@@ -76,6 +91,14 @@ public class InventorySlot : MonoBehaviour
                 cardGameObject = null;
             }
         }
+    }
 
+    public void ResetDefaultTransform()
+    {
+        cardGameObject.transform.localPosition = defaulPosRotLocalRot.Item1;
+        cardGameObject.transform.localRotation = defaulPosRotLocalRot.Item2;
+        cardGameObject.transform.GetChild(0).rotation = defaulPosRotLocalRot.Item3;
+
+        print("Reset Position");
     }
 }

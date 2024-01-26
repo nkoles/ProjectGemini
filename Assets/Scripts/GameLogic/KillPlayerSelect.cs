@@ -17,7 +17,7 @@ public class KillPlayerSelect : MonoBehaviour
     public bool confirmChoice = true;
     private void OnMouseOver()
     {
-        if (!confirmChoice)
+        if (!confirmChoice && this.enabled)
         {
             selectText.enabled = true;
         }
@@ -25,13 +25,12 @@ public class KillPlayerSelect : MonoBehaviour
 
     private void OnMouseExit()
     {
-            selectText.enabled = false;
-        
+        selectText.enabled = false;
     }
 
     private void OnMouseDown()
     {
-        if(Input.GetMouseButtonDown(0))
+        if(Input.GetMouseButtonDown(0) && this.enabled)
         {
             playerDecision.PlayCard(playerInventory.inventorySlots[selectedCard.cardSlotID].CardObject,
                                     playerInventory.inventorySlots[selectedCard.cardSlotID].Card.CardType,

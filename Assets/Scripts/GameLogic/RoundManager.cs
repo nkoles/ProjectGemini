@@ -242,6 +242,7 @@ public class RoundManager : MonoBehaviour
         {
             if(playersOut.Contains(playerInventories[i].PlayerID)) continue;
             roundState = (i == 0) ? ERoundState.Play : ERoundState.AIPass;
+
             print("Player " + i + " Turn");
             playerDecisionHandler[i].enabled = true;
             print(playerDecisions[i].Key);
@@ -279,7 +280,7 @@ public class RoundManager : MonoBehaviour
             yield return StartCoroutine(FocusCamera(cardCameraPosition));
             yield return new WaitForSeconds(0.1f);
             yield return StartCoroutine(FlipCard(playerDecisionHandler[i].currentPlayedCard));
-            yield return new WaitForSeconds(2.5f);
+            yield return new WaitForSeconds(1f);
         }
         yield return StartCoroutine(FocusCamera(cameraAnchor.transform));
     }
@@ -323,8 +324,23 @@ public class RoundManager : MonoBehaviour
                 yield return new WaitForSeconds(0.2f);
                 yield return StartCoroutine(FocusCamera(attackedCameraPosition));
 
-                if (playerDecisions[attackedPlayer].Key == "Block" || playerDecisions[attackedPlayer].Key == "Bean")
+                if (playerDecisions[attackedPlayer].Key == "Block" || playerDecisions[attackedPlayer].Key == "Bean" || playerInventories[attackedPlayer].CheckForBean())
                 {
+                    if(playerInventories[attackedPlayer].CheckForBean() && playerDecisions[attackedPlayer].Key != "Block" && playerDecisions[attackedPlayer].Key != "Bean")
+                    {
+                        for(int j = 0; j < playerInventories[attackedPlayer].inventorySlots.Length; ++j)
+                        {
+                            if (playerInventories[attackedPlayer].inventorySlots[j].Card.CardType == "Bean")
+                            {
+                                if(attackedPlayer != 0)
+                                    StartCoroutine(FlipCard(playerInventories[attackedPlayer].inventorySlots[j].CardObject));
+
+                                playerInventories[attackedPlayer].RemoveCard(j);
+                                break;
+                            }
+                        }
+                    }
+
                     yield return StartCoroutine(Announcement("They escape it! Player " + (attackedPlayer + 1) +
                                                              " gets to see another day"));
                     continue;
@@ -423,14 +439,14 @@ public class RoundManager : MonoBehaviour
         playerText.text = "";
     }
 
-    private IEnumerator Announcement(string message)
+    private IEnumerator Announcement(string message, float speed = 30f)
     {
         message += " . . . ";
         announcement.text = "";
         foreach (var letter in message)
         {
             announcement.text += letter;
-            yield return new WaitForSeconds(0.11f);
+            yield return new WaitForSeconds(1/speed);
         }
 
         yield return new WaitForSeconds(3f);
@@ -439,7 +455,10 @@ public class RoundManager : MonoBehaviour
 
     private void ResetRound()
     {
-        playerDecisions.ForEach(value => value = new KeyValuePair<string, int>(null, 0));
+        for(int i = 0; i < playerDecisions.Count; ++i)
+        {
+            playerDecisions[i] = new KeyValuePair<string, int>(null, 0);
+        }
     }
     
 

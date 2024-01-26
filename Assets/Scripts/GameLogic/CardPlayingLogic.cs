@@ -13,14 +13,17 @@ public class CardPlayingLogic : MonoBehaviour
     public TextMeshProUGUI cardDescriptor;
     public int cardSlotID;
 
+    public List<CardPlayingLogic> cardLogic = new List<CardPlayingLogic>();
     public List<KillPlayerSelect> players = new List<KillPlayerSelect>();
 
     static public bool isClicked = false;
+    static public bool isSwapped = false;
 
     private void Start()
     {
         _playerInventory = GetComponentInParent<InventoryHandler>();
         _playerDecision = GetComponentInParent<PlayerAction>();
+        cardLogic = FindObjectsOfType<CardPlayingLogic>(true).ToList();
         players = FindObjectsOfType<KillPlayerSelect>(true).ToList();
     }
 
@@ -54,7 +57,18 @@ public class CardPlayingLogic : MonoBehaviour
                 {
                     StartCoroutine(SelectAttackee(player));
                 }
-            }else
+            } else if (_playerInventory.inventorySlots[cardSlotID].Card.CardType == "Swap")
+            {
+                //int swapCardID = cardSlotID;
+
+                //if(Input.GetMouseButtonDown(0) && !isClicked && _playerInventory.inventorySlots[swapCardID].Card.CardType != "Swap")
+                //{
+                //    _playerDecision.PlayCard(_playerInventory.inventorySlots[swapCardID].CardObject,
+                //                         _playerInventory.inventorySlots[cardSlotID].Card.CardType,
+                //                         cardSlotID, swapCardID);
+                //}
+            }
+            else
                 _playerDecision.PlayCard(_playerInventory.inventorySlots[cardSlotID].CardObject,
                                          _playerInventory.inventorySlots[cardSlotID].Card.CardType, 
                                          _playerInventory.PlayerID, cardSlotID);
@@ -84,5 +98,6 @@ public class CardPlayingLogic : MonoBehaviour
         cardDescriptor.text = "";
         cardDescriptor.gameObject.SetActive(false);
         isClicked = false;
+        isSwapped = false;
     }
 }

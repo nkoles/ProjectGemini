@@ -98,7 +98,6 @@ public class PlayerAction : MonoBehaviour
         print("Animation Complete for " + playerID);
         roundManager.playerDecisions[playerID] = new KeyValuePair<string, int>(cardType, targetPlayer);
         
-
         this.enabled = false;
     }
 
