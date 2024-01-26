@@ -9,10 +9,7 @@ public class InventoryHandler : MonoBehaviour
     //Inventory ID per Player: 0 = Player, 1 = AI 1, 2 = AI 2, 3 = AI = 3
     [SerializeField] private int _inventoryID;
 
-    public int PlayerID
-    {
-        get { return _inventoryID; }
-    }
+    public int PlayerID { get; private set; }
 
 
     public GameObject[] cards = new GameObject[3];
@@ -20,6 +17,7 @@ public class InventoryHandler : MonoBehaviour
 
     private void Awake()
     {
+        PlayerID = _inventoryID;
         for (int i = 0; i < inventorySlots.Length; ++i)
         {
             inventorySlots[i] = this.AddComponent<InventorySlot>();
@@ -40,4 +38,13 @@ public class InventoryHandler : MonoBehaviour
     {
         inventorySlots[slotID].Card = null;
     }
+
+    public void RemoveAllCards()
+    {
+        foreach (var slot in inventorySlots)
+        {
+            slot.Card = null;
+        }
+    }
+
 }

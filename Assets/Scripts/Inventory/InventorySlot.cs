@@ -8,7 +8,7 @@ public class InventorySlot : MonoBehaviour
     //Card Type
     [CanBeNull] private CardBase? card;
     //Object Linked to Slot
-    [CanBeNull] private GameObject? cardGameObject;
+    [CanBeNull] public GameObject? cardGameObject;
     [CanBeNull] private Renderer cardRenderer;
 
     public InventorySlot(CardBase? cardType, GameObject cardObject)
@@ -42,6 +42,7 @@ public class InventorySlot : MonoBehaviour
             } 
             else
             {
+                print("Card Cleared!");
                 card = null;
 
                 if( cardGameObject != null )
@@ -60,7 +61,7 @@ public class InventorySlot : MonoBehaviour
             if(value != null)
             {
                 cardGameObject = value;
-                cardRenderer = cardGameObject.GetComponent<Renderer>();
+                cardRenderer = cardGameObject.GetComponentInChildren<Renderer>(true);
 
                 if(card != null)
                 {

@@ -11,11 +11,10 @@ public class PlayerAction : MonoBehaviour
     public int playerID;
 
     public List<CardPlayingLogic> cardLogic = new List<CardPlayingLogic>();
+    public GameObject currentPlayedCard;
+    public int PlayedSlot;
 
     public RoundManager roundManager;
-
-    [CanBeNull] public string? cardPlayedType;
-    [CanBeNull] public int? cardTarget;
 
     private void Awake()
     {
@@ -35,6 +34,7 @@ public class PlayerAction : MonoBehaviour
 
     private void OnEnable()
     {
+        currentPlayedCard = null;
         foreach (var obj in cardLogic)
         {
             obj.enabled = true;
@@ -42,34 +42,60 @@ public class PlayerAction : MonoBehaviour
 
         if (playerID != 0)
         {
-            PlayCard(_playerInventory.inventorySlots[0].CardObject, _playerInventory.inventorySlots[0].Card.CardType, _playerInventory.PlayerID);
+            var playCardNum = Random.Range(0, _playerInventory.inventorySlots.Length);
+            int target = _playerInventory.PlayerID;
+            
+            // If the chosen card is attack, attack a random player in the game that is not itself
+            if (_playerInventory.inventorySlots[playCardNum].Card.CardType == "Attack")
+            {
+                // Create a list containing all active player IDs, excluding self
+                List<int> playerIDs = new List<int>();
+                roundManager.playerInventories.ForEach(inventory => playerIDs.Add(inventory.PlayerID));
+                playerIDs.Remove(target);
+
+                // Get a random player, if theres only 2 players left it hardcodes the choice to the non-npc player
+                int randPlayer = playerIDs[Random.Range(0, playerIDs.Count)];
+                target = (playerIDs.Count == 1) ? 0 : randPlayer;
+            }
+
+            currentPlayedCard = _playerInventory.inventorySlots[playCardNum].CardObject;
+            PlayCard(_playerInventory.inventorySlots[playCardNum].CardObject,
+                     _playerInventory.inventorySlots[playCardNum].Card.CardType,
+                target, playCardNum);
         }
     }
 
-    private void OnDisable()
+    public void PlayCard(GameObject playedCard, string type, int target, int cardSlot)
     {
-        cardPlayedType = null;
-        cardTarget = null;
-    }
-
-    public void PlayCard(GameObject playedCard, string type, int target)
-    {
+        currentPlayedCard = playedCard;
+        cardLogic.ForEach(obj => obj.enabled = false);
+        print(" playCard: " + playedCard.name + type + target);
+        PlayedSlot = cardSlot;
         StartCoroutine(PlayCardAnimation(playedCard.transform, cardPositionReference, type, target));
     }
 
     private IEnumerator PlayCardAnimation(Transform cardObject, Transform cardLocation, string cardType, int targetPlayer)
     {
-        while(cardObject.position != cardLocation.position || cardObject.rotation != cardLocation.rotation)
+        print("playing animation");
+        for( float i = 0; i < 1.1f; i += 0.1f )
         {
-            cardObject.rotation = Quaternion.Slerp(cardObject.rotation, cardLocation.rotation, Time.deltaTime * 20);
+            cardObject.rotation = Quaternion.Slerp(cardObject.rotation, cardLocation.rotation, i);
 
-            cardObject.position = Vector3.Slerp(cardObject.position, cardLocation.position, Time.deltaTime * 10);
+            cardObject.position = Vector3.Slerp(cardObject.position, cardLocation.position, i);
 
-            yield return null;
+            yield return new WaitForSeconds(0.02f);
         }
-
+        print("Animation Complete for " + playerID);
         roundManager.playerDecisions[playerID] = new KeyValuePair<string, int>(cardType, targetPlayer);
+        
 
         this.enabled = false;
     }
+
+    public void ReturnCard(Transform cardObject)
+    {
+        cardObject.rotation = cardPositionReference.rotation;
+        cardObject.position = cardPositionReference.position;
+    }
 }
+

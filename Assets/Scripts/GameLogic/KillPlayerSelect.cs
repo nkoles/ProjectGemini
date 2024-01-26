@@ -10,30 +10,42 @@ public class KillPlayerSelect : MonoBehaviour
     public InventoryHandler playerInventory;
 
     public int playerID;
+    public int slotID;
 
     public TextMeshProUGUI selectText;
 
+    public bool confirmChoice = true;
     private void OnMouseOver()
     {
-        selectText.enabled = true;
+        if (!confirmChoice)
+        {
+            selectText.enabled = true;
+        }
     }
 
     private void OnMouseExit()
     {
-        selectText.enabled = false;
+            selectText.enabled = false;
+        
     }
 
     private void OnMouseDown()
     {
         if(Input.GetMouseButtonDown(0))
         {
-            playerDecision.PlayCard(playerInventory.inventorySlots[selectedCard.cardSlotID].CardObject, playerInventory.inventorySlots[selectedCard.cardSlotID].Card.CardType, playerID);
+            playerDecision.PlayCard(playerInventory.inventorySlots[selectedCard.cardSlotID].CardObject,
+                                    playerInventory.inventorySlots[selectedCard.cardSlotID].Card.CardType,
+                                    playerID, slotID);
 
+            confirmChoice = true;
+            enabled = false;
         }
     }
+    
 
     private void OnDisable()
     {
+        selectText.enabled = false;
         foreach(KillPlayerSelect obj in FindObjectsOfType<KillPlayerSelect>())
         {
             obj.enabled = false;
