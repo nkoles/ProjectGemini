@@ -4,12 +4,15 @@ using System.Linq;
 using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 public class RoundManager : MonoBehaviour
 {
     static public int beanCount = 1;
     private int roundCount;
+
+    public bool isStarted;
 
     public List<GameObject> aiPlayerModels = new List<GameObject>();
     public List<InventoryHandler> playerInventories = new List<InventoryHandler>( );
@@ -56,7 +59,7 @@ public class RoundManager : MonoBehaviour
     // using "await" on an async call
     private IEnumerator GameOrder()
     {
-        while (playerInventories.Count > 1)
+        while (playerInventories.Count > 1 || playersOut.Contains(0))
         {
             ResetRound();
             yield return StartCoroutine(DealPhase());
@@ -67,6 +70,14 @@ public class RoundManager : MonoBehaviour
             yield return StartCoroutine(CardReveal());
             yield return StartCoroutine(EvaluateCards());
             yield return StartCoroutine(RemoveDeadPlayers());
+        }
+
+        if(playersOut.Contains(0))
+        {
+            SceneManager.LoadScene("GameOver");
+        } else
+        {
+            SceneManager.LoadScene("Victory");
         }
     }
 
