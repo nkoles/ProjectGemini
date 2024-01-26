@@ -288,6 +288,47 @@ public class RoundManager : MonoBehaviour
     private IEnumerator EvaluateCards()
     {
         var attacks = playerDecisions.Where(decision => decision.Key == "Attack").ToList();
+        var swaps = playerDecisions.Where(decision => decision.Key == "Swap").ToList();
+        var beans = playerDecisions.Where(decision => decision.Key == "Bean").ToList();
+
+
+        for (int i = 0; i < playerDecisions.Count; ++i)
+        {
+            Transform cardCameraPosition = playerDecisionHandler[i].currentPlayedCard.transform;
+
+            foreach (Transform t in playerDecisionHandler[i].currentPlayedCard.transform)
+            {
+                cardCameraPosition = (t.name == "Camera Anchor") ? t : cardCameraPosition;
+            }
+
+            if (beans.Contains(playerDecisions[i]))
+            {
+                var beanID = playerDecisions[i].Value;
+
+                yield return StartCoroutine(FocusCamera(cardCameraPosition));
+
+                yield return StartCoroutine(Announcement("Bean"));
+
+                yield return new WaitForSeconds(0.2f);
+            }
+
+            yield return StartCoroutine(FocusCamera(cameraAnchor.transform));
+
+            if (swaps.Contains(playerDecisions[i]))
+            {
+                var swappedCardID = playerDecisions[i].Value;
+
+                playerInventories[i].RemoveCard(swappedCardID);
+                StartCoroutine(CardDealing(i, swappedCardID));
+
+                yield return StartCoroutine(Announcement("Player " + i + " has swapped a card "));
+
+                yield return new WaitForSeconds(0.2f);
+            }
+        }
+
+        yield return new WaitForSeconds(1f);
+
         if (attacks.Count == 0)
         {
             yield return Speech("No Attacks! Lucky", 2);
@@ -295,6 +336,7 @@ public class RoundManager : MonoBehaviour
         }
         else
         {
+
             yield return Speech("An Attack, Who must go", 2);
             for (int i = 0; i < playerDecisions.Count; i++)
             {
@@ -323,7 +365,7 @@ public class RoundManager : MonoBehaviour
                 
                 yield return new WaitForSeconds(0.2f);
                 yield return StartCoroutine(FocusCamera(attackedCameraPosition));
-
+                
                 if (playerDecisions[attackedPlayer].Key == "Block" || playerDecisions[attackedPlayer].Key == "Bean" || playerInventories[attackedPlayer].CheckForBean())
                 {
                     if(playerInventories[attackedPlayer].CheckForBean() && playerDecisions[attackedPlayer].Key != "Block" && playerDecisions[attackedPlayer].Key != "Bean")
@@ -422,7 +464,7 @@ public class RoundManager : MonoBehaviour
         }
     }
 
-    private IEnumerator Speech(string message, int player)
+    private IEnumerator Speech(string message, int player, float speed = 30f)
     {
         message += " . . . ";
         var findPlayer = playerInventories.Find(inv => inv.PlayerID == player).gameObject;
@@ -432,7 +474,7 @@ public class RoundManager : MonoBehaviour
         foreach (var letter in message)
         {
             playerText.text += letter;
-            yield return new WaitForSeconds(0.11f);
+            yield return new WaitForSeconds(1/speed);
         }
 
         yield return new WaitForSeconds(3f);

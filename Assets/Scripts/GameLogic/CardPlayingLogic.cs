@@ -17,7 +17,7 @@ public class CardPlayingLogic : MonoBehaviour
     public List<KillPlayerSelect> players = new List<KillPlayerSelect>();
 
     static public bool isClicked = false;
-    static public bool isSwapped = false;
+    public bool isSwapped = false;
 
     private void Start()
     {
@@ -29,7 +29,7 @@ public class CardPlayingLogic : MonoBehaviour
 
     private void OnMouseOver()
     {
-        if (!isClicked && this.enabled)
+        if (!isClicked && this.enabled && !isSwapped)
         {
             cardDescriptor.text = _playerInventory.inventorySlots[cardSlotID].Card.CardDescription;
             cardDescriptor.gameObject.SetActive(true);
@@ -48,7 +48,7 @@ public class CardPlayingLogic : MonoBehaviour
     //Passes Given Card To PlayerDecision Handler
     private void OnMouseDown()
     {
-        if (Input.GetMouseButtonDown(0) && !isClicked && this.enabled)
+        if (Input.GetMouseButtonDown(0) && !isClicked && this.enabled && !isSwapped)
         {
             if (_playerInventory.inventorySlots[cardSlotID].Card.CardType == "Attack")
             {
@@ -59,14 +59,15 @@ public class CardPlayingLogic : MonoBehaviour
                 }
             } else if (_playerInventory.inventorySlots[cardSlotID].Card.CardType == "Swap")
             {
-                //int swapCardID = cardSlotID;
+                isSwapped = true;
+                int swapCardID = cardSlotID;
 
-                //if(Input.GetMouseButtonDown(0) && !isClicked && _playerInventory.inventorySlots[swapCardID].Card.CardType != "Swap")
-                //{
-                //    _playerDecision.PlayCard(_playerInventory.inventorySlots[swapCardID].CardObject,
-                //                         _playerInventory.inventorySlots[cardSlotID].Card.CardType,
-                //                         cardSlotID, swapCardID);
-                //}
+                if (Input.GetMouseButtonDown(0) && isSwapped && _playerInventory.inventorySlots[swapCardID].Card.CardType != "Swap")
+                {
+                    _playerDecision.PlayCard(_playerInventory.inventorySlots[swapCardID].CardObject,
+                                         _playerInventory.inventorySlots[cardSlotID].Card.CardType,
+                                         cardSlotID, swapCardID);
+                }
             }
             else
                 _playerDecision.PlayCard(_playerInventory.inventorySlots[cardSlotID].CardObject,
