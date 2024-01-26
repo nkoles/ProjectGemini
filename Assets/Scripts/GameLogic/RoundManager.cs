@@ -60,10 +60,10 @@ public class RoundManager : MonoBehaviour
             ResetRound();
             yield return StartCoroutine(DealPhase());
             // Initialize the card checking animation
-            //yield return StartCoroutine(AICheckCards(45f, 1f, 3f));
+            yield return StartCoroutine(AICheckCards(45f, 1f, 3f));
             // Begin next phase
             yield return StartCoroutine(GetPlayingCards());
-            //yield return StartCoroutine(CardReveal());
+            yield return StartCoroutine(CardReveal());
             yield return StartCoroutine(EvaluateCards());
             yield return StartCoroutine(RemoveDeadPlayers());
         }
@@ -252,7 +252,7 @@ public class RoundManager : MonoBehaviour
 
             playerDecisionHandler[i].enabled = false;
 
-            yield return new WaitForSeconds(Random.Range(2, 4));
+            yield return null;
         }
 
         print("All Cards Played");
@@ -395,12 +395,12 @@ public class RoundManager : MonoBehaviour
 
     private IEnumerator FlipCard(GameObject card)
     {
-        var startPosition = card.GetComponentInChildren<Renderer>().transform.rotation;
+        var startPosition = card.transform.GetChild(0).rotation;
         var targetPosition = startPosition * Quaternion.Euler(0,0,180f);
 
         for (float i = 0; i < 1.1f; i += 0.1f)
         {
-            card.GetComponentInChildren<Renderer>().transform.rotation = Quaternion.Slerp(startPosition, targetPosition, i);
+            card.transform.GetChild(0).rotation = Quaternion.Slerp(startPosition, targetPosition, i);
             
             yield return new WaitForSeconds(0.02f);
         }
@@ -441,6 +441,7 @@ public class RoundManager : MonoBehaviour
     {
         playerDecisions.ForEach(value => value = new KeyValuePair<string, int>(null, 0));
     }
+    
 
     #endregion
 }

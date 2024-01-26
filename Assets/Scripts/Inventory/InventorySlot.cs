@@ -1,3 +1,4 @@
+using System;
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,6 +23,7 @@ public class InventorySlot : MonoBehaviour
         Card = null;
         CardObject = null;
     }
+    
 
     public CardBase Card
     {
@@ -35,7 +37,7 @@ public class InventorySlot : MonoBehaviour
 
                 if(cardGameObject != null)
                 {
-                    cardRenderer.enabled = true;
+                    cardGameObject.transform.GetChild(0).gameObject.SetActive(true);
                     cardRenderer.material = value.CardMaterial;
                 }
 
@@ -46,7 +48,7 @@ public class InventorySlot : MonoBehaviour
                 card = null;
 
                 if( cardGameObject != null )
-                    cardRenderer.enabled = false;
+                    cardGameObject.transform.GetChild(0).gameObject.SetActive(false);
             }
 
         }
@@ -61,7 +63,8 @@ public class InventorySlot : MonoBehaviour
             if(value != null)
             {
                 cardGameObject = value;
-                cardRenderer = cardGameObject.GetComponentInChildren<Renderer>(true);
+                cardGameObject.transform.GetChild(0).gameObject.SetActive(false);
+                cardRenderer = cardGameObject.transform.GetChild(0).GetComponentInChildren<Renderer>(true);
 
                 if(card != null)
                 {

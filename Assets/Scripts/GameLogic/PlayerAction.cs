@@ -1,8 +1,10 @@
+using System;
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class PlayerAction : MonoBehaviour
 {
@@ -35,6 +37,7 @@ public class PlayerAction : MonoBehaviour
     private void OnEnable()
     {
         currentPlayedCard = null;
+        StartCoroutine(FocusCards(true));
         foreach (var obj in cardLogic)
         {
             obj.enabled = true;
@@ -42,27 +45,34 @@ public class PlayerAction : MonoBehaviour
 
         if (playerID != 0)
         {
-            var playCardNum = Random.Range(0, _playerInventory.inventorySlots.Length);
-            int target = _playerInventory.PlayerID;
-            
-            // If the chosen card is attack, attack a random player in the game that is not itself
-            if (_playerInventory.inventorySlots[playCardNum].Card.CardType == "Attack")
-            {
-                // Create a list containing all active player IDs, excluding self
-                List<int> playerIDs = new List<int>();
-                roundManager.playerInventories.ForEach(inventory => playerIDs.Add(inventory.PlayerID));
-                playerIDs.Remove(target);
-
-                // Get a random player, if theres only 2 players left it hardcodes the choice to the non-npc player
-                int randPlayer = playerIDs[Random.Range(0, playerIDs.Count)];
-                target = (playerIDs.Count == 1) ? 0 : randPlayer;
-            }
-
-            currentPlayedCard = _playerInventory.inventorySlots[playCardNum].CardObject;
-            PlayCard(_playerInventory.inventorySlots[playCardNum].CardObject,
-                     _playerInventory.inventorySlots[playCardNum].Card.CardType,
-                target, playCardNum);
+            StartCoroutine(NPCCardPick());
         }
+    }
+
+    public IEnumerator NPCCardPick()
+    {
+        var playCardNum = Random.Range(0, _playerInventory.inventorySlots.Length);
+        int target = _playerInventory.PlayerID;
+            
+        // If the chosen card is attack, attack a random player in the game that is not itself
+        if (_playerInventory.inventorySlots[playCardNum].Card.CardType == "Attack")
+        {
+            // Create a list containing all active player IDs, excluding self
+            List<int> playerIDs = new List<int>();
+            roundManager.playerInventories.ForEach(inventory => playerIDs.Add(inventory.PlayerID));
+            playerIDs.Remove(target);
+
+            // Get a random player, if theres only 2 players left it hardcodes the choice to the non-npc player
+            int randPlayer = playerIDs[Random.Range(0, playerIDs.Count)];
+            target = (playerIDs.Count == 1) ? 0 : randPlayer;
+        }
+
+        yield return new WaitForSeconds(Random.Range(2f, 4.3f));
+        
+        currentPlayedCard = _playerInventory.inventorySlots[playCardNum].CardObject;
+        PlayCard(_playerInventory.inventorySlots[playCardNum].CardObject,
+            _playerInventory.inventorySlots[playCardNum].Card.CardType,
+            target, playCardNum);
     }
 
     public void PlayCard(GameObject playedCard, string type, int target, int cardSlot)
@@ -96,6 +106,24 @@ public class PlayerAction : MonoBehaviour
     {
         cardObject.rotation = cardPositionReference.rotation;
         cardObject.position = cardPositionReference.position;
+    }
+
+    private void OnDisable()
+    {
+        StartCoroutine(FocusCards(false));
+    }
+    
+    private IEnumerator FocusCards(bool inOut)
+    {
+        var startPosition = transform.position;
+        var movement = (inOut) ? 0.8f : -0.8f;
+        var targetPosition = transform.position + new Vector3(0, movement, 0);
+
+        for (float i = 0; i < 1.1; i += 0.15f)
+        {
+            transform.position = Vector3.Slerp(startPosition, targetPosition, i);
+            yield return new WaitForSeconds(0.03f);
+        }
     }
 }
 

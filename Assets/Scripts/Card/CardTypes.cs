@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class CardTypes
 {
-    static public CardBase CardAttack = new CardBase("Attack", "its attacks lol", "CardMaterials/TestMaterial");
-    static public CardBase CardBlock = new CardBase("Block", "its blocks lol", "CardMaterials/TestMaterial 1");
-    static public CardBase CardSwap = new CardBase("Swap", "its swaps lol", "CardMaterials/TestMaterial 2");
-    static public CardBase CardBean = new CardBase("Bean", "been", "CardMaterials/TestMaterial 3");
+    static public CardBase CardAttack = new CardBase("Attack", "Attack Card: Choose a player to attack this turn.\n", "CardMaterials/AttackCard");
+    static public CardBase CardBlock = new CardBase("Block", "Block Card: Negate any attacks from other players this turn.\n", "CardMaterials/BlockCard");
+    static public CardBase CardSwap = new CardBase("Swap", "Swap Card: Select a card from your remaining hand to discard and receive 2 cards at the start of your next turn.\n", "CardMaterials/SwapCard");
+    static public CardBase CardBean = new CardBase("Bean", "Bean Card: You hold the power of beans. Use of this card will save you when attacked. Single use only.\n", "CardMaterials/BeanCard");
 }
