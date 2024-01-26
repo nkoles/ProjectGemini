@@ -4,20 +4,20 @@ public class CardBase
 {
     public string CardType { get; }
     public string CardDescription { get; }
-    public Texture CardTexture { get; }
+    public Material CardMaterial { get; }
     
     //Constructor
-    public CardBase(string newType, string newDescription, string newTexture)
+    public CardBase(string newType, string newDescription, string newMaterial)
     {
         CardType = newType;
         CardDescription = newDescription;
-        CardTexture = GetTexture(newTexture);
+        CardMaterial = GetMaterial(newMaterial);
     }
 
     //Gets the inputted texture from the resources folder
-    private Texture GetTexture(string filePath)
+    private Material GetMaterial(string filePath)
     {
-        return Resources.Load<Texture>(filePath);
+        return Resources.Load<Material>(filePath);
     }
 
 }

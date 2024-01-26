@@ -1,0 +1,5 @@
+﻿---
+- dialog_type: Stoic
+- scenario: win
+- line: hello this is a test line
+- condition: 1
