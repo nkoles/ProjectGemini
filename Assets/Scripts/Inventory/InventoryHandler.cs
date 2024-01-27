@@ -27,13 +27,21 @@ public class InventoryHandler : MonoBehaviour
 
     public bool CheckForBean()
     {
-        foreach (InventorySlot slot in inventorySlots)
+        try
         {
-            if (slot.Card.CardType == "Bean")
-                return true;
-        }
+            foreach (InventorySlot slot in inventorySlots)
+            {
+                if (slot.Card.CardType == "Bean")
+                    return true;
+            }
 
-        return false;
+            return false;
+        }
+        catch
+        {
+            Debug.LogWarning("Checking for bean when it does not exist lol.");
+            return false;
+        }
     }
 
     //Adds Card To Designated Slot

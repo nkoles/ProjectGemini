@@ -8,7 +8,7 @@ public class SceneChanger : MonoBehaviour
 {
     public void RestartGame()
     {
-        SceneManager.LoadScene("GamePlay");
+        SceneManager.LoadScene("Scenes/TestingRoundScene");
     }
 
     public void QuitGame()
