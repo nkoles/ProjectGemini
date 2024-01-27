@@ -63,14 +63,12 @@ public class InventoryHandler : MonoBehaviour
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Debug.LogWarning(e);
             
             inventorySlots[0].ResetDefaultTransform();
             inventorySlots[0].Card = null;
 
             print(inventorySlots[0].CardObject.transform.localRotation);
-            
-            throw;
         }
         
 
