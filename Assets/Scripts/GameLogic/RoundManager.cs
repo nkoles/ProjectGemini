@@ -266,7 +266,7 @@ public class RoundManager : MonoBehaviour
                 }
 
                 // Wait before putting the card down
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(0.1f);
 
                 
                 // Animate movement - Putting the card down
@@ -385,7 +385,7 @@ public class RoundManager : MonoBehaviour
             }
         }
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.3f);
 
         if (attacks.Count == 0)
         {
@@ -491,6 +491,11 @@ public class RoundManager : MonoBehaviour
                 
                 Destroy(player);
             }
+        }
+
+        if (playersOut.Contains(0))
+        {
+            SceneManager.LoadScene("Scenes/GameOver");
         }
     }
     #endregion

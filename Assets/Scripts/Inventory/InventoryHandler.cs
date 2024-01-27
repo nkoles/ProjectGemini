@@ -1,3 +1,4 @@
+using System;
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
@@ -53,11 +54,27 @@ public class InventoryHandler : MonoBehaviour
 
     public void RemoveCard(int slotID)
     {
-        inventorySlots[slotID].ResetDefaultTransform();
-        inventorySlots[slotID].Card = null;
+        try
+        {
+            inventorySlots[slotID].ResetDefaultTransform();
+            inventorySlots[slotID].Card = null;
 
+            print(inventorySlots[slotID].CardObject.transform.localRotation);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            
+            inventorySlots[0].ResetDefaultTransform();
+            inventorySlots[0].Card = null;
 
-        print(inventorySlots[slotID].CardObject.transform.localRotation);
+            print(inventorySlots[0].CardObject.transform.localRotation);
+            
+            throw;
+        }
+        
+
+       
     }
 
     public void RemoveAllCards()
