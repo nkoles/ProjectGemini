@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -568,4 +569,12 @@ public class RoundManager : MonoBehaviour
     
 
     #endregion
+
+    private void Update()
+    {
+        if (!playersOut.Contains(0) && playersOut.Count >= 3)
+        {
+            SceneManager.LoadScene("Victory");
+        }
+    }
 }
