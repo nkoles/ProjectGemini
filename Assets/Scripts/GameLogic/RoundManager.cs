@@ -77,7 +77,7 @@ public class RoundManager : MonoBehaviour
             ResetRound();
             yield return StartCoroutine(DealPhase());
             // Initialize the card checking animation
-            yield return StartCoroutine(AICheckCards(45f, 1f, 3f));
+            yield return StartCoroutine(AICheckCards(45f, 1f, 0.05f));
             // Begin next phase
             yield return StartCoroutine(GetPlayingCards());
             yield return StartCoroutine(CardReveal());
