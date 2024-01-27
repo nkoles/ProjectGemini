@@ -118,7 +118,7 @@ public class RoundManager : MonoBehaviour
             }
         }
 
-        yield return new WaitForSeconds(0.75f);
+        yield return new WaitForSeconds(0.2f);
 
         
     }
