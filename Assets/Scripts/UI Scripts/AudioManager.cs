@@ -14,7 +14,7 @@ public class AudioManager : MonoBehaviour
     }
     public void play(string clipName)
     {
-        var clip = Resources.Load<AudioClip>(clipName);
+        var clip = Resources.Load<AudioClip>("Audio/"+clipName);
         SFXPlayer.clip = clip;
         SFXPlayer.Play();
     }

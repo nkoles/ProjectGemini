@@ -17,10 +17,14 @@ public class CardPlayingLogic : MonoBehaviour
     public List<KillPlayerSelect> players = new List<KillPlayerSelect>();
 
     static public bool isClicked = false;
-    public bool isSwapped = false;
+    static public bool isSwapped = false;
+    static public int swapCardID;
 
     private void Start()
     {
+        isClicked = false;
+        isSwapped = false;
+
         _playerInventory = GetComponentInParent<InventoryHandler>();
         _playerDecision = GetComponentInParent<PlayerAction>();
         cardLogic = FindObjectsOfType<CardPlayingLogic>(true).ToList();
@@ -32,7 +36,6 @@ public class CardPlayingLogic : MonoBehaviour
         if (!isClicked && this.enabled && !isSwapped)
         {
             cardDescriptor.text = _playerInventory.inventorySlots[cardSlotID].Card.CardDescription;
-            cardDescriptor.gameObject.SetActive(true);
         }
     }
 
@@ -41,14 +44,13 @@ public class CardPlayingLogic : MonoBehaviour
         if (!isClicked && this.enabled)
         {
             cardDescriptor.text = "";
-            cardDescriptor.gameObject.SetActive(false);
         }
     }
 
     //Passes Given Card To PlayerDecision Handler
     private void OnMouseDown()
     {
-        if (Input.GetMouseButtonDown(0) && !isClicked && this.enabled && !isSwapped)
+        if (Input.GetMouseButtonDown(0) && !isClicked && this.enabled)
         {
             if (_playerInventory.inventorySlots[cardSlotID].Card.CardType == "Attack")
             {
@@ -57,17 +59,16 @@ public class CardPlayingLogic : MonoBehaviour
                 {
                     StartCoroutine(SelectAttackee(player));
                 }
-            } else if (_playerInventory.inventorySlots[cardSlotID].Card.CardType == "Swap")
+            } else if (_playerInventory.inventorySlots[cardSlotID].Card.CardType == "Swap" && !isSwapped)
             {
                 isSwapped = true;
-                int swapCardID = cardSlotID;
+                swapCardID = cardSlotID;
 
-                if (Input.GetMouseButtonDown(0) && isSwapped && _playerInventory.inventorySlots[swapCardID].Card.CardType != "Swap")
-                {
-                    _playerDecision.PlayCard(_playerInventory.inventorySlots[swapCardID].CardObject,
-                                         _playerInventory.inventorySlots[cardSlotID].Card.CardType,
-                                         cardSlotID, swapCardID);
-                }
+            }else if (_playerInventory.inventorySlots[cardSlotID].Card.CardType != "Swap" && isSwapped)
+            {
+                _playerDecision.PlayCard(_playerInventory.inventorySlots[swapCardID].CardObject,
+                                     _playerInventory.inventorySlots[cardSlotID].Card.CardType,
+                                     cardSlotID, swapCardID);
             }
             else
                 _playerDecision.PlayCard(_playerInventory.inventorySlots[cardSlotID].CardObject,
@@ -97,8 +98,10 @@ public class CardPlayingLogic : MonoBehaviour
     private void OnDisable()
     {
         cardDescriptor.text = "";
-        cardDescriptor.gameObject.SetActive(false);
+
         isClicked = false;
         isSwapped = false;
+
+        swapCardID = cardSlotID;
     }
 }

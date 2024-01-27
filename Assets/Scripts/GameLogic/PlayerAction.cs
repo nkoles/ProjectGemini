@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using UnityEditor.Rendering;
 
 public class PlayerAction : MonoBehaviour
 {
@@ -21,7 +22,6 @@ public class PlayerAction : MonoBehaviour
     private void Awake()
     {
         _playerInventory = GetComponent<InventoryHandler>();
-        playerID = _playerInventory.PlayerID;
 
         try
         {
@@ -37,7 +37,9 @@ public class PlayerAction : MonoBehaviour
     private void OnEnable()
     {
         currentPlayedCard = null;
+
         StartCoroutine(FocusCards(true));
+
         foreach (var obj in cardLogic)
         {
             obj.enabled = true;
@@ -61,6 +63,14 @@ public class PlayerAction : MonoBehaviour
             List<int> playerIDs = new List<int>();
             roundManager.playerInventories.ForEach(inventory => playerIDs.Add(inventory.PlayerID));
             playerIDs.Remove(target);
+            
+            foreach(int pID in roundManager.playersOut)
+            {
+                if (playerIDs.Contains(pID))
+                {
+                    playerIDs.Remove(pID);
+                }
+            }
 
             // Get a random player, if theres only 2 players left it hardcodes the choice to the non-npc player
             int randPlayer = playerIDs[Random.Range(0, playerIDs.Count)];

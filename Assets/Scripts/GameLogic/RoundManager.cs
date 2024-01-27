@@ -2,17 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 public class RoundManager : MonoBehaviour
 {
-    static public int beanCount = 1;
+    public int beanCount = 1;
     private int roundCount;
 
     public bool isStarted;
+
+    public AudioManager audioHandler;
 
     public List<GameObject> aiPlayerModels = new List<GameObject>();
     public List<InventoryHandler> playerInventories = new List<InventoryHandler>( );
@@ -54,12 +55,24 @@ public class RoundManager : MonoBehaviour
         StartCoroutine(GameOrder());
     }
     
+    private bool p1OutCheck()
+    {
+        foreach(int pID in  playersOut)
+        {
+            if(pID == 0)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Linear Coroutines have been moved here to make following the order easier
     // using "yield return" allows for us to wait until the specified routine is complete before continuing, like
     // using "await" on an async call
     private IEnumerator GameOrder()
     {
-        while (playerInventories.Count > 1 || playersOut.Contains(0))
+        while (playersOut.Count > 2 || !p1OutCheck())
         {
             ResetRound();
             yield return StartCoroutine(DealPhase());
@@ -72,10 +85,11 @@ public class RoundManager : MonoBehaviour
             yield return StartCoroutine(RemoveDeadPlayers());
         }
 
-        if(playersOut.Contains(0))
+        if (playersOut.Contains(0))
         {
             SceneManager.LoadScene("GameOver");
-        } else
+        }
+        else
         {
             SceneManager.LoadScene("Victory");
         }
@@ -111,32 +125,45 @@ public class RoundManager : MonoBehaviour
 
     private CardBase CardDrawProbability(int beanCount)
     {
-        int percentage = Random.Range(0, 100);
+        int percentage = Random.Range(0, 101);
 
-        int beanPercentage = 10 / beanCount;
-        int swapPercentage = beanPercentage / 2;
-        int otherCardPercentage = (100 - beanPercentage - swapPercentage) / 3;
+        int beanPercentage = 15 / beanCount;
+        int otherCardPercentage = (int)((100 - beanPercentage*2) / 3);
 
         if (percentage > 100 - beanPercentage)
         {
-            return CardTypes.CardAttack;
+            return CardTypes.CardBean;
         }
         
-        if(percentage > 100 - beanPercentage - swapPercentage)
+        if(percentage > 100 - beanPercentage *2)
         {
             return CardTypes.CardSwap;
         }
 
-        if(percentage > 100 - beanPercentage - swapPercentage - otherCardPercentage)
+        if(percentage > 100 - beanPercentage*2 - otherCardPercentage)
         {
             return CardTypes.CardBlock;
         }
+
+        print(percentage);
+        return CardTypes.CardAttack;
+    }
+
+    //Swap Luck
+    private CardBase CardDrawProbability()
+    {
+       int percentage = Random.Range(0, 256);
+
+       if(percentage%2 == 0)
+       {
+            return CardTypes.CardBean;
+       }
 
         return CardTypes.CardAttack;
     }
 
     // Deals the card to the player, taking in the player's ID and the inventory slot ID
-    private IEnumerator CardDealing(int inventoryID, int inventorySlotID)
+    private IEnumerator CardDealing(int inventoryID, int inventorySlotID, bool isSwapped = false)
     {
         // Instantiate the "dummy card" which will be animated
         GameObject dealedCard = Instantiate(cardPrefab, deckRefPoint);  
@@ -171,6 +198,8 @@ public class RoundManager : MonoBehaviour
             yield return new WaitForSeconds(0.02f);
         }
 
+        audioHandler.play("Deal");
+
         // Animation - position
         for (float i = 0f; i < 1.1f; i += 0.1f)
         {
@@ -180,11 +209,16 @@ public class RoundManager : MonoBehaviour
         }
 
         // Randomly select card type
-        CardBase dealedCardType;
+        CardBase dealedCardType = CardTypes.CardBean;
         int randomTypeGenerator = Random.Range(0, 101);
 
+        if(!isSwapped)
         // Assign random value to a card type
-        dealedCardType = CardDrawProbability(beanCount);
+            dealedCardType = CardDrawProbability(beanCount);
+        else
+        {
+            dealedCardType = CardDrawProbability();
+        }
 
         // Assign new card to the player's inventory
         playerInventories[inventoryID].AddCard(inventorySlotID, dealedCardType);

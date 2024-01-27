@@ -20,12 +20,14 @@ public class KillPlayerSelect : MonoBehaviour
         if (!confirmChoice && this.enabled)
         {
             selectText.enabled = true;
+            selectText.text = "Kill Player" + playerID;
         }
     }
 
     private void OnMouseExit()
     {
-        selectText.enabled = false;
+        if (this.enabled)
+            selectText.text = "";
     }
 
     private void OnMouseDown()

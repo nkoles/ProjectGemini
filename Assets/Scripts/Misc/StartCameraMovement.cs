@@ -15,23 +15,32 @@ public class StartCameraMovement : MonoBehaviour
         StartCoroutine(StartMovement());
     }
 
-    public IEnumerator StartMovement(float speed = 1)
+    public IEnumerator StartMovement()
     {
-        while(transform.position != playerPositionRefPoint.position || playerPositionRefPoint.rotation != transform.rotation)
-        {
-            transform.position = Vector3.Slerp(transform.position, playerPositionRefPoint.position, speed * Time.deltaTime);
-            transform.rotation = Quaternion.Slerp(transform.rotation,playerPositionRefPoint.rotation, speed * Time.deltaTime);
 
-            yield return null;
+        for (float j = 0; j <= 1; j += 0.01f)
+        {
+            transform.position = Vector3.Slerp(transform.position, playerPositionRefPoint.position, j);
+            transform.rotation = Quaternion.Slerp(transform.rotation, playerPositionRefPoint.rotation, j);
+
+            yield return new WaitForSeconds(0.02f);
         }
 
-        for(int i = 0; i < maskModels.Length; i++)
-        {
-            while (maskModels[i].position != playerPositionRefPoint.position)
-            {
-                maskModels[i].position = Vector3.Slerp(maskModels[i].position, maskTargetPosition[i].position, Time.deltaTime * speed * 10);
+        print("Camera Scroll Finished");
 
-                yield return null;
+        StartCoroutine(StartMaskMovement());
+    }
+
+    public IEnumerator StartMaskMovement()
+    {
+        for (int i = 0; i < maskModels.Length; i++)
+        {
+            for (float j = 0; j <= 1; j += 0.01f)
+            {
+                print("why ???");
+                maskModels[i].position = Vector3.Slerp(maskModels[i].position, maskTargetPosition[i].position, j);
+
+                yield return new WaitForSeconds(0.02f);
             }
 
             yield return new WaitForSeconds(Random.Range(0.2f, 1));
